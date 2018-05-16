@@ -1,4 +1,6 @@
-public class Response {
+import java.io.Serializable;
+
+public class Response implements Serializable {
     private RequestType type;
     private String result;
 
