@@ -11,10 +11,12 @@ public class OrderActor extends AbstractActor {
     public AbstractActor.Receive createReceive() {
         return receiveBuilder()
                 .match(OrderAction.class, action -> {
-                    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("bookshop/orders.txt", true)));
-                    out.println(action.getTitle());
+                    Writer output;
+                    output = new BufferedWriter(new FileWriter("bookshop/orders.txt", true));
+                    output.append(action.getTitle() + "\n");
+                    output.close();
 
-                    getSender().tell(new Response(RequestType.ORDER, "Success"), getSelf());
+                    getSender().tell(new Result(RequestType.ORDER, "Success", action.getSender()), getSelf());
                 })
                 .matchAny(o -> log.info("received unknown message"))
                 .build();

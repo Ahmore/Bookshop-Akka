@@ -5,12 +5,10 @@ public class Finder {
     int state1 = 0;
     String finder2;
     int state2 = 0;
-    ActorRef sender;
 
-    public Finder(String finder1, String finder2, ActorRef sender) {
+    public Finder(String finder1, String finder2) {
         this.finder1 = finder1;
         this.finder2 = finder2;
-        this.sender = sender;
     }
 
     public String getFinder1() {
@@ -35,9 +33,5 @@ public class Finder {
 
     public void setState2(int state2) {
         this.state2 = state2;
-    }
-
-    public ActorRef getSender() {
-        return sender;
     }
 }

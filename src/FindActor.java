@@ -20,13 +20,13 @@ public class FindActor extends AbstractActor {
                         String[] parsedLine = parseLine(line);
 
                         if (parsedLine[0].equals(action.getTitle())) {
-                            getSender().tell(new Response(RequestType.FIND, parsedLine[1]), getSelf());
+                            getSender().tell(new Result(RequestType.FIND, parsedLine[1], action.getSender()), getSelf());
 
                             return;
                         }
                     }
 
-                    getSender().tell(new Response(RequestType.FIND, ""), getSelf());
+                    getSender().tell(new Result(RequestType.FIND, "", action.getSender()), getSelf());
                 })
                 .matchAny(o -> log.info("received unknown message"))
                 .build();

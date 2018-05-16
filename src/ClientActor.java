@@ -40,6 +40,9 @@ public class ClientActor extends AbstractActor {
                             System.out.println("Price: " + response.getResult());
                         }
                     }
+                    else if (response.getType() == RequestType.ORDER) {
+                        System.out.println("Result: " + response.getResult());
+                    }
                 })
                 .matchAny(o -> log.info("received unknown message"))
                 .build();
