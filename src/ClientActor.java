@@ -1,9 +1,15 @@
 import akka.Done;
 import akka.actor.AbstractActor;
+import akka.actor.AllForOneStrategy;
+import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.japi.pf.DeciderBuilder;
+import scala.concurrent.duration.Duration;
 
 import java.util.Arrays;
+
+import static akka.actor.SupervisorStrategy.restart;
 
 public class ClientActor extends AbstractActor {
 
@@ -56,5 +62,15 @@ public class ClientActor extends AbstractActor {
         String[] splited = line.split(" ");
 
         return String.join(" ", Arrays.copyOfRange(splited, 1, splited.length));
+    }
+
+    private static SupervisorStrategy strategy
+            = new AllForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
+            matchAny(o -> restart()).
+            build());
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return strategy;
     }
 }

@@ -1,19 +1,27 @@
 import akka.NotUsed;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
+import akka.actor.AllForOneStrategy;
+import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.japi.pf.DeciderBuilder;
 import akka.stream.ActorMaterializer;
 import akka.stream.OverflowStrategy;
 import akka.stream.ThrottleMode;
 import akka.stream.javadsl.Sink;
 import akka.stream.javadsl.Source;
+import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.concurrent.TimeUnit;
+
+import static akka.actor.SupervisorStrategy.restart;
+import static akka.actor.SupervisorStrategy.stop;
 
 public class ReadActor extends AbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
@@ -46,5 +54,15 @@ public class ReadActor extends AbstractActor {
                 })
                 .matchAny(o -> log.info("Received unknown message"))
                 .build();
+    }
+
+    private static SupervisorStrategy strategy
+            = new AllForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
+            matchAny(o -> restart()).
+            build());
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return strategy;
     }
 }

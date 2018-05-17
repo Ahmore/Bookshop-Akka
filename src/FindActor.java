@@ -1,10 +1,19 @@
 import akka.actor.AbstractActor;
+import akka.actor.AllForOneStrategy;
+import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.japi.pf.DeciderBuilder;
+import scala.concurrent.duration.Duration;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
+
+import static akka.actor.SupervisorStrategy.restart;
+import static akka.actor.SupervisorStrategy.resume;
+import static akka.actor.SupervisorStrategy.stop;
 
 public class FindActor extends AbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
@@ -40,6 +49,19 @@ public class FindActor extends AbstractActor {
         String[] result = {title, price};
 
         return result;
+    }
+
+    private static SupervisorStrategy strategy
+            = new AllForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
+            match(FileNotFoundException.class, e ->
+                    stop()
+            ).
+            matchAny(o -> restart()).
+            build());
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return strategy;
     }
 }
 

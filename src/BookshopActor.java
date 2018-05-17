@@ -1,11 +1,20 @@
 import akka.actor.AbstractActor;
+import akka.actor.AllForOneStrategy;
 import akka.actor.Props;
+import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.japi.pf.DeciderBuilder;
 import akka.stream.ActorMaterializer;
 import akka.stream.Materializer;
+import scala.concurrent.duration.Duration;
 
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
+
+import static akka.actor.SupervisorStrategy.restart;
+import static akka.actor.SupervisorStrategy.resume;
+import static akka.actor.SupervisorStrategy.stop;
 
 public class BookshopActor extends AbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
@@ -80,11 +89,8 @@ public class BookshopActor extends AbstractActor {
                             }
                         }
                     }
-                    else if (result.getType() == RequestType.ORDER) {
-                        result.getSender().tell(new Response(result.getType(), result.getResult()), null);
-                    }
                 })
-                .matchAny(o -> log.info("received unknown message"))
+                .matchAny(o -> log.info("Received unknown message"))
                 .build();
     }
 
@@ -102,5 +108,15 @@ public class BookshopActor extends AbstractActor {
         }
 
         return null;
+    }
+
+    private static SupervisorStrategy strategy
+            = new AllForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
+            matchAny(o -> restart()).
+            build());
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return strategy;
     }
 }
