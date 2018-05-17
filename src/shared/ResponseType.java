@@ -1,6 +1,6 @@
 package shared;
 
-public enum RequestType {
+public enum ResponseType {
     FIND,
     ORDER,
     READ

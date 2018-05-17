@@ -6,9 +6,9 @@ import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.DeciderBuilder;
-import bookshop.actions.OrderAction;
 import scala.concurrent.duration.Duration;
-import shared.RequestType;
+import shared.Request;
+import shared.ResponseType;
 import shared.Response;
 
 import java.io.*;
@@ -21,13 +21,13 @@ public class OrderActor extends AbstractActor {
     @Override
     public AbstractActor.Receive createReceive() {
         return receiveBuilder()
-                .match(OrderAction.class, action -> {
+                .match(Request.class, request -> {
                     Writer output;
                     output = new BufferedWriter(new FileWriter("bookshop/orders.txt", true));
-                    output.append(action.getTitle() + "\n");
+                    output.append(request.getTitle() + "\n");
                     output.close();
 
-                    action.getSender().tell(new Response(RequestType.ORDER, "Successfully ordered"), getSelf());
+                    getSender().tell(new Response(ResponseType.ORDER, "Successfully ordered"), getSelf());
                 })
                 .matchAny(o -> log.info("Received unknown message"))
                 .build();

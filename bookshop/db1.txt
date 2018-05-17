@@ -1,2 +1,2 @@
-Book number 1 25.90
-Book number 2 24.90
+book1 25.90
+book2 24.90

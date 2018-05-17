@@ -2,65 +2,102 @@ package bookshop.actors;
 
 import akka.actor.AbstractActor;
 import akka.actor.AllForOneStrategy;
+import akka.actor.Props;
 import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.DeciderBuilder;
 import bookshop.actions.FindAction;
-import bookshop.others.Result;
+import bookshop.others.FindResult;
+import bookshop.others.Finder;
 import scala.concurrent.duration.Duration;
-import shared.RequestType;
+import shared.Request;
+import shared.Response;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Arrays;
+import java.util.LinkedList;
 
 import static akka.actor.SupervisorStrategy.restart;
-import static akka.actor.SupervisorStrategy.resume;
-import static akka.actor.SupervisorStrategy.stop;
 
 public class FindActor extends AbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
+    private LinkedList<Finder> finders = new LinkedList<>();
 
     @Override
     public AbstractActor.Receive createReceive() {
         return receiveBuilder()
-                .match(FindAction.class, action -> {
-                    BufferedReader br = new BufferedReader(new FileReader(action.getDb()));
-                    String line;
+                .match(Request.class, request -> {
+                    String finder1 = "find" + java.util.UUID.randomUUID().toString();
+                    String finder2 = "find" + java.util.UUID.randomUUID().toString();
 
-                    while ((line = br.readLine()) != null) {
-                        String[] parsedLine = parseLine(line);
+                    this.finders.push(new Finder(finder1, finder2));
 
-                        if (parsedLine[0].equals(action.getTitle())) {
-                            getSender().tell(new Result(RequestType.FIND, parsedLine[1], action.getSender()), getSelf());
+                    context().actorOf(Props.create(FindActorChild.class), finder1);
+                    context().actorOf(Props.create(FindActorChild.class), finder2);
+                    context().child(finder1).get().tell(new FindAction(request.getTitle(), "bookshop/db1.txt", getSender()), getSelf());
+                    context().child(finder2).get().tell(new FindAction(request.getTitle(), "bookshop/db2.txt", getSender()), getSelf());
+                })
+                .match(FindResult.class, result -> {
+                    String finderName = getSender().path().name();
+                    Finder finder = this.getFinder(finderName);
 
-                            return;
+                    if (finder != null) {
+                        // Found
+                        if (!result.getResult().equals("")) {
+                            if (finder.getFinder1().equals(finderName)) {
+                                finder.setState1(1);
+
+                                if (finder.getState2() != 1) {
+                                    result.getSender().tell(new Response(result.getType(), result.getResult()), null);
+                                }
+                                context().stop(context().child(finder.getFinder1()).get());
+                            }
+                            else {
+                                finder.setState2(1);
+
+                                if (finder.getState1() != 1) {
+                                    result.getSender().tell(new Response(result.getType(), result.getResult()), null);
+                                }
+                                context().stop(context().child(finder.getFinder2()).get());
+                            }
+
+                        }
+                        // Not found
+                        else {
+                            if (finder.getFinder1().equals(finderName)) {
+                                finder.setState1(-1);
+
+                                if (finder.getState2() == -1) {
+                                    result.getSender().tell(new Response(result.getType(), result.getResult()), null);
+                                }
+                                context().stop(context().child(finder.getFinder1()).get());
+                            }
+                            else {
+                                finder.setState2(-1);
+
+                                if (finder.getState1() == -1) {
+                                    result.getSender().tell(new Response(result.getType(), result.getResult()), null);
+                                }
+                                context().stop(context().child(finder.getFinder2()).get());
+                            }
                         }
                     }
-
-                    getSender().tell(new Result(RequestType.FIND, "", action.getSender()), getSelf());
                 })
                 .matchAny(o -> log.info("Received unknown message"))
                 .build();
     }
 
-    public static String[] parseLine(String line) {
-        String[] splited = line.split(" ");
-        String title = String.join(" ", Arrays.copyOfRange(splited, 0, splited.length-1));
-        String price = splited[splited.length-1];
+    public Finder getFinder(String finder) {
+        for (Finder obj : this.finders) {
+            if (obj.getFinder1().equals(finder) || obj.getFinder2().equals(finder)) {
+                return obj;
+            }
+        }
 
-        String[] result = {title, price};
-
-        return result;
+        return null;
     }
 
     private static SupervisorStrategy strategy
             = new AllForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
-            match(FileNotFoundException.class, e ->
-                    stop()
-            ).
             matchAny(o -> restart()).
             build());
 
@@ -69,4 +106,3 @@ public class FindActor extends AbstractActor {
         return strategy;
     }
 }
-

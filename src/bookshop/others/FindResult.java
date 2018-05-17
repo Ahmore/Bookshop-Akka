@@ -1,20 +1,20 @@
 package bookshop.others;
 
 import akka.actor.ActorRef;
-import shared.RequestType;
+import shared.ResponseType;
 
-public class Result {
-    private RequestType type;
+public class FindResult {
+    private ResponseType type;
     private String result;
     private ActorRef sender;
 
-    public Result(RequestType type, String result, ActorRef sender) {
+    public FindResult(ResponseType type, String result, ActorRef sender) {
         this.type = type;
         this.result = result;
         this.sender = sender;
     }
 
-    public RequestType getType() {
+    public ResponseType getType() {
         return type;
     }
 

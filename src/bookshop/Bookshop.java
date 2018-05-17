@@ -3,7 +3,9 @@ package bookshop;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import bookshop.actors.BookshopActor;
+import bookshop.actors.FindActor;
+import bookshop.actors.OrderActor;
+import bookshop.actors.ReadActor;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import java.io.BufferedReader;
@@ -20,7 +22,9 @@ public class Bookshop {
 
         // Create actor system & actors
         final ActorSystem system = ActorSystem.create("bookshop_system", config);
-        final ActorRef remote = system.actorOf(Props.create(BookshopActor.class), "bookshop");
+        final ActorRef find = system.actorOf(Props.create(FindActor.class), "find");
+        final ActorRef order = system.actorOf(Props.create(OrderActor.class), "order");
+        final ActorRef read = system.actorOf(Props.create(ReadActor.class), "read");
 
         // Interaction
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
