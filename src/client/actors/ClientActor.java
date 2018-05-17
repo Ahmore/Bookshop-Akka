@@ -1,4 +1,5 @@
-import akka.Done;
+package client.actors;
+
 import akka.actor.AbstractActor;
 import akka.actor.AllForOneStrategy;
 import akka.actor.SupervisorStrategy;
@@ -6,6 +7,9 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.DeciderBuilder;
 import scala.concurrent.duration.Duration;
+import shared.Request;
+import shared.RequestType;
+import shared.Response;
 
 import java.util.Arrays;
 

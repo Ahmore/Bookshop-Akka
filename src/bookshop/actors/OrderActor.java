@@ -1,10 +1,15 @@
+package bookshop.actors;
+
 import akka.actor.AbstractActor;
 import akka.actor.AllForOneStrategy;
 import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.DeciderBuilder;
+import bookshop.actions.OrderAction;
 import scala.concurrent.duration.Duration;
+import shared.RequestType;
+import shared.Response;
 
 import java.io.*;
 

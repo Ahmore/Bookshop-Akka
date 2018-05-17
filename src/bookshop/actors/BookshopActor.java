@@ -1,3 +1,5 @@
+package bookshop.actors;
+
 import akka.actor.AbstractActor;
 import akka.actor.AllForOneStrategy;
 import akka.actor.Props;
@@ -5,16 +7,19 @@ import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.DeciderBuilder;
-import akka.stream.ActorMaterializer;
-import akka.stream.Materializer;
+import bookshop.actions.FindAction;
+import bookshop.actions.OrderAction;
+import bookshop.actions.ReadAction;
+import bookshop.others.Finder;
+import bookshop.others.Result;
 import scala.concurrent.duration.Duration;
+import shared.Request;
+import shared.RequestType;
+import shared.Response;
 
-import java.io.FileNotFoundException;
 import java.util.LinkedList;
 
 import static akka.actor.SupervisorStrategy.restart;
-import static akka.actor.SupervisorStrategy.resume;
-import static akka.actor.SupervisorStrategy.stop;
 
 public class BookshopActor extends AbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);

@@ -1,10 +1,12 @@
+package bookshop.actions;
+
 import akka.actor.ActorRef;
 
-public class OrderAction {
+public class ReadAction {
     private String title;
     private ActorRef sender;
 
-    public OrderAction(String title, ActorRef sender) {
+    public ReadAction(String title, ActorRef sender) {
         this.title = title;
         this.sender = sender;
     }

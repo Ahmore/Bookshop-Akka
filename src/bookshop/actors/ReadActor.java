@@ -1,3 +1,5 @@
+package bookshop.actors;
+
 import akka.NotUsed;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
@@ -11,8 +13,11 @@ import akka.stream.OverflowStrategy;
 import akka.stream.ThrottleMode;
 import akka.stream.javadsl.Sink;
 import akka.stream.javadsl.Source;
+import bookshop.actions.ReadAction;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
+import shared.RequestType;
+import shared.Response;
 
 import java.io.BufferedReader;
 import java.io.File;

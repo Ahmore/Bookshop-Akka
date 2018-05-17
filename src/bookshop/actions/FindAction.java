@@ -1,3 +1,5 @@
+package bookshop.actions;
+
 import akka.actor.ActorRef;
 
 public class FindAction {

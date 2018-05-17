@@ -1,14 +1,14 @@
-import akka.actor.ActorRef;
+package shared;
 
-public class Result {
+import java.io.Serializable;
+
+public class Response implements Serializable {
     private RequestType type;
     private String result;
-    private ActorRef sender;
 
-    public Result(RequestType type, String result, ActorRef sender) {
+    public Response(RequestType type, String result) {
         this.type = type;
         this.result = result;
-        this.sender = sender;
     }
 
     public RequestType getType() {
@@ -17,9 +17,5 @@ public class Result {
 
     public String getResult() {
         return result;
-    }
-
-    public ActorRef getSender() {
-        return sender;
     }
 }
