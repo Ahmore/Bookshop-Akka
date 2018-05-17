@@ -1,5 +1,3 @@
-import akka.actor.ActorRef;
-
 public class Finder {
     String finder1;
     int state1 = 0;

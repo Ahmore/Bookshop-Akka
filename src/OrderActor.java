@@ -16,9 +16,9 @@ public class OrderActor extends AbstractActor {
                     output.append(action.getTitle() + "\n");
                     output.close();
 
-                    getSender().tell(new Result(RequestType.ORDER, "Success", action.getSender()), getSelf());
+                    getSender().tell(new Result(RequestType.ORDER, "Successfully ordered", action.getSender()), getSelf());
                 })
-                .matchAny(o -> log.info("received unknown message"))
+                .matchAny(o -> log.info("Received unknown message"))
                 .build();
     }
 }

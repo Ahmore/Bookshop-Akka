@@ -17,7 +17,7 @@ public class Client {
         final ActorSystem system = ActorSystem.create("client_system", config);
         final ActorRef local = system.actorOf(Props.create(ClientActor.class), "client");
 
-        // interaction
+        // Interaction
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             String line = br.readLine();

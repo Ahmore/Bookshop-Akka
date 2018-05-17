@@ -11,15 +11,15 @@ public class Bookshop {
 
     public static void main(String[] args) throws Exception {
 
-        // config
+        // Config
         File configFile = new File("bookshop.conf");
         Config config = ConfigFactory.parseFile(configFile);
 
-        // create actor system & actors
+        // Create actor system & actors
         final ActorSystem system = ActorSystem.create("bookshop_system", config);
         final ActorRef remote = system.actorOf(Props.create(BookshopActor.class), "bookshop");
 
-        // interaction
+        // Interaction
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             String line = br.readLine();

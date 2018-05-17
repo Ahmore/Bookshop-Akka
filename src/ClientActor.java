@@ -1,3 +1,4 @@
+import akka.Done;
 import akka.actor.AbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
@@ -28,13 +29,13 @@ public class ClientActor extends AbstractActor {
                         getContext().actorSelection("akka.tcp://bookshop_system@127.0.0.1:3552/user/bookshop").tell(request, getSelf());
                     }
                     else {
-                        System.out.println(s);
+                        System.out.println("Unknown command");
                     }
                 })
                 .match(Response.class, response -> {
                     if (response.getType() == RequestType.FIND) {
                         if (response.getResult().equals("")) {
-                            System.out.println("Book not found.");
+                            System.out.println("Book not found");
                         }
                         else {
                             System.out.println("Price: " + response.getResult());
@@ -43,8 +44,11 @@ public class ClientActor extends AbstractActor {
                     else if (response.getType() == RequestType.ORDER) {
                         System.out.println("Result: " + response.getResult());
                     }
+                    else if (response.getType() == RequestType.READ) {
+                        System.out.println(response.getResult());
+                    }
                 })
-                .matchAny(o -> log.info("received unknown message"))
+                .matchAny(o -> log.info("Received unknown message"))
                 .build();
     }
 

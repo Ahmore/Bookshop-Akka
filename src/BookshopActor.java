@@ -2,8 +2,9 @@ import akka.actor.AbstractActor;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.stream.ActorMaterializer;
+import akka.stream.Materializer;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 public class BookshopActor extends AbstractActor {
@@ -29,8 +30,7 @@ public class BookshopActor extends AbstractActor {
                         context().child("order").get().tell(new OrderAction(request.getTitle(), getSender()), getSelf());
                     }
                     else if (request.getType().equals(RequestType.READ)) {
-//                        context().actorOf(Props.create(ReadActor.class), "read" + java.util.UUID.randomUUID().toString());
-//                        context().child("multiplyWorker").get().tell(s, getSelf());
+                        context().child("read").get().tell(new ReadAction(request.getTitle(), getSender()), getSelf());
                     }
                 })
                 .match(Result.class, result -> {
@@ -91,6 +91,7 @@ public class BookshopActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         context().actorOf(Props.create(OrderActor.class), "order");
+        context().actorOf(Props.create(ReadActor.class), "read");
     }
 
     public Finder getFinder(String finder) {

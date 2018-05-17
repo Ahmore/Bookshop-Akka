@@ -28,7 +28,7 @@ public class FindActor extends AbstractActor {
 
                     getSender().tell(new Result(RequestType.FIND, "", action.getSender()), getSelf());
                 })
-                .matchAny(o -> log.info("received unknown message"))
+                .matchAny(o -> log.info("Received unknown message"))
                 .build();
     }
 
