@@ -52,7 +52,7 @@ public class ClientActor extends AbstractActor {
                         }
                     }
                     else if (response.getType() == ResponseType.ORDER) {
-                        System.out.println("FindResult: " + response.getResult());
+                        System.out.println("Result: " + response.getResult());
                     }
                     else if (response.getType() == ResponseType.READ) {
                         System.out.println(response.getResult());

@@ -1,4 +1,4 @@
-package bookshop.actions;
+package bookshop.others;
 
 import akka.actor.ActorRef;
 

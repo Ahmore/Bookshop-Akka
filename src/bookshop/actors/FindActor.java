@@ -7,7 +7,7 @@ import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.DeciderBuilder;
-import bookshop.actions.FindAction;
+import bookshop.others.FindAction;
 import bookshop.others.FindResult;
 import bookshop.others.Finder;
 import scala.concurrent.duration.Duration;

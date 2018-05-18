@@ -6,7 +6,7 @@ import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.DeciderBuilder;
-import bookshop.actions.FindAction;
+import bookshop.others.FindAction;
 import bookshop.others.FindResult;
 import scala.concurrent.duration.Duration;
 import shared.ResponseType;
@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
 
-import static akka.actor.SupervisorStrategy.restart;
 import static akka.actor.SupervisorStrategy.stop;
 
 public class FindActorChild extends AbstractActor {
@@ -60,7 +59,7 @@ public class FindActorChild extends AbstractActor {
             match(FileNotFoundException.class, e ->
                     stop()
             ).
-            matchAny(o -> restart()).
+            matchAny(o -> stop()).
             build());
 
     @Override
